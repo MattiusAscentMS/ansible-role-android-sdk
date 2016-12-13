@@ -1,0 +1,5 @@
+android_sdk_cache_dir: /tmp/ansible-cache
+android_sdk_version: "24.4.1"
+android_sdk_zipfile: "android-sdk_r{{android_sdk_version}}-linux.tgz"
+android_sdk_folder:  "android-sdk-linux"
+android_sdk_tools: []

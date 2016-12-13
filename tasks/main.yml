@@ -1,0 +1,36 @@
+---
+- name: Install Expect
+  package: name=expect state=present
+  become: yes
+  tags: [android]
+
+- name: Add auto accept tool
+  template: src=accept-android-license.j2 dest=/opt/accept-android-license.sh mode=0777
+  become: yes
+  tags: [android]
+
+- name: Download Android SDK {{android_sdk_version}}
+  get_url: dest={{android_sdk_cache_dir}} url=https://dl.google.com/android/{{android_sdk_zipfile}}
+  become: yes
+  tags: [android]
+
+- name: Extract Android SDK
+  unarchive: copy=no src={{android_sdk_cache_dir}}/{{android_sdk_zipfile}} dest=/opt/ mode=0777
+  become: yes
+  tags: [android]
+
+- name: Add Android environment variables to profile
+  template: src=android-sdk.j2 dest=/etc/profile.d/android-sdk.sh
+  become: yes
+  tags: [android]
+
+- name: Install android build-tools
+  command: /opt/accept-android-license.sh "/opt/{{android_sdk_folder}}/tools/android update sdk --no-ui --all --filter {{item}}"
+  with_items:
+    - "{{android_sdk_tools}}"
+  tags: [android]
+
+- name: Clean up files
+  file: name={{android_sdk_cache_dir}}/{{android_sdk_zipfile}} state=absent
+  become: yes
+  tags: [android]
